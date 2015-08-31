@@ -42,7 +42,7 @@ func loadData(fileName string) {
 		if strings.Contains(line.Text, "TOA5") {
 			skip = 4
 		}
-		if skip != 0 {
+		if skip > 0 {
 			// decode headers here
 			skip = skip - 1
 			continue
@@ -57,6 +57,7 @@ func loadData(fileName string) {
 		if err != nil {
 			log.Fatal(err)
 		}
+		log.Println(voltage)
 		batteryVoltage.Set(voltage)
 	}
 }
