@@ -2,15 +2,12 @@ package main
 
 import (
 	"encoding/csv"
-	"fmt"
 	"github.com/ActiveState/tail"
 	"github.com/prometheus/client_golang/prometheus"
 	"log"
 	"net/http"
 	"strconv"
 	"strings"
-	// "regexp"
-	// "time"
 )
 
 var (
@@ -46,7 +43,7 @@ func loadData(fileName string) {
 			skip = 4
 		}
 		if skip != 0 {
-			fmt.Println(line.Text)
+			// decode headers here
 			skip = skip - 1
 			continue
 		}
@@ -60,7 +57,6 @@ func loadData(fileName string) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		fmt.Println(voltage)
 		batteryVoltage.Set(voltage)
 	}
 }
