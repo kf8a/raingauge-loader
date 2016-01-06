@@ -83,6 +83,7 @@ func loadData(fileName string) {
 		}
 		log.Println(voltage)
 		batteryVoltage.Set(voltage)
+		loadEvents.Inc()
 	}
 }
 
