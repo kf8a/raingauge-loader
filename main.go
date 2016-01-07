@@ -11,14 +11,20 @@ import (
 )
 
 var (
-	loadEvents = prometheus.NewCounter(prometheus.CounterOpts{
-		Name: "datalogger_rows_loaded",
-		Help: "the number of rows loaded into the database",
-	})
-	batteryVoltage = prometheus.NewGauge(prometheus.GaugeOpts{
+	loadEvents = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Namespace: "datalogger",
+			Name:      "rows_loaded",
+			Help:      "the number of rows loaded into the database",
+		},
+		[]string{"site"},
+	)
+	batteryVoltage = prometheus.NewGaugeVec(prometheus.GaugeOpts{
 		Name: "datalogger_main_battery_voltage",
 		Help: "The current main battery voltage",
-	})
+	},
+		[]string{"site"},
+	)
 )
 
 func init() {
@@ -65,7 +71,7 @@ func loadData(fileName string) {
 			skip = 4
 		}
 		if skip == 3 {
-			// decode headers here
+			// decode headers
 			fields := readCSVLine(line.Text)
 			variates := stringSlice(fields)
 			battery = variates.pos("GageMinV")
@@ -82,8 +88,8 @@ func loadData(fileName string) {
 			log.Fatal(err)
 		}
 		log.Println(voltage)
-		batteryVoltage.Set(voltage)
-		loadEvents.Inc()
+		batteryVoltage.WithLabelValues("luxarbor").Set(voltage)
+		loadEvents.WithLabelValues("luxarbor").Inc()
 	}
 }
 
