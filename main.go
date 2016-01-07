@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/csv"
 	"encoding/json"
+	"fmt"
 	"github.com/ActiveState/tail"
 	"github.com/prometheus/client_golang/prometheus"
 	"log"
@@ -95,7 +96,7 @@ func loadData(logger logger) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		// log.Println(voltage)
+		log.Println(fmt.Sprintf("%v: %v", logger.Site, voltage))
 		batteryVoltage.WithLabelValues(logger.Site).Set(voltage)
 		loadEvents.WithLabelValues(logger.Site).Inc()
 	}
