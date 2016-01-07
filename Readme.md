@@ -5,5 +5,6 @@ http://prometheus.io/, metrics are available on port 9094.
 
 Example
 
-    loader < example.json
+    go build
+    raingauge-loader < example.json
 
