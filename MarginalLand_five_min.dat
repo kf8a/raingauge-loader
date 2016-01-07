@@ -1,0 +1,8 @@
+"TOA5","MarginalLand","CR800","37067","CR800.Std.28","CPU:marginal-langs-from-logger.CR8","44481","five_min"
+"TIMESTAMP","RECORD","BattV_Min","PTemp_C_Avg","SlrkW_Avg","SlrMJ_Tot","Rain_mm_Tot","AirTC_Avg","RH","PAR_Den_Avg","PAR_Tot_Tot","WS_ms_Avg","WS_max_ms_Max"
+"TS","RN","Volts","Deg C","kW/m^2","MJ/m^2","mm","Deg C","%","umol/s/m^2","mmol/m^2","meters/second","meters/second"
+"","","Min","Avg","Avg","Tot","Tot","Avg","Smp","Avg","Tot","Avg","Max"
+"2015-12-21 10:30:00",0,12.32,5.42,0.028,0.0001400136,0,4.956,99.8,418.1,2.090717,0,0
+"2015-12-21 10:35:00",1,12.31,5.442,0.027,0.004083856,0.254,4.991,99.7,394.9,59.23576,2.642,0
+"2015-12-21 10:40:00",2,12.34,5.473,0.038,0.005726093,0,5.021,99.7,544.5,81.67613,2.37,0
+"2015-12-21 10:45:00",3,12.36,5.493,0.04,0.006041147,0,5.079,99.7,570.5,85.56867,2.435,0
