@@ -20,8 +20,8 @@ var (
 		[]string{"site"},
 	)
 	batteryVoltage = prometheus.NewGaugeVec(prometheus.GaugeOpts{
-		Name: "datalogger_main_battery_voltage",
-		Help: "The current main battery voltage",
+		Name: "datalogger_battery_voltage",
+		Help: "The current battery voltage",
 	},
 		[]string{"site"},
 	)
@@ -52,7 +52,7 @@ func readCSVLine(text string) []string {
 	return fields
 }
 
-func loadData(fileName string) {
+func loadData(fileName string, site string, batteryVoltName string) {
 
 	t, err := tail.TailFile(fileName, tail.Config{
 		Follow: true,
@@ -74,7 +74,7 @@ func loadData(fileName string) {
 			// decode headers
 			fields := readCSVLine(line.Text)
 			variates := stringSlice(fields)
-			battery = variates.pos("GageMinV")
+			battery = variates.pos(batteryVoltName)
 		}
 		if skip > 0 {
 			// skip the rest
@@ -87,15 +87,16 @@ func loadData(fileName string) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		log.Println(voltage)
-		batteryVoltage.WithLabelValues("luxarbor").Set(voltage)
-		loadEvents.WithLabelValues("luxarbor").Inc()
+		// log.Println(voltage)
+		batteryVoltage.WithLabelValues(site).Set(voltage)
+		loadEvents.WithLabelValues(site).Inc()
 	}
 }
 
 func main() {
 
-	go loadData("raingauge_Table1.dat")
+	go loadData("raingauge_Table1.dat", "lter-raingauge", "GageMinV")
+	go loadData("MarginalLand_five_min.dat", "luxarbor", "BattV_Min")
 
 	http.Handle("/metrics", prometheus.Handler())
 	http.ListenAndServe(":9094", nil)
