@@ -77,9 +77,11 @@ func loadData(logger logger) {
 	tail := fileToTail(logger.FileName)
 
 	var batteryFieldNumber int
+	var variates stringSlice
 
 	// Read title and variables and units
 	skip := 0
+
 	for line := range tail.Lines {
 		if strings.Contains(line.Text, "TOA5") {
 			skip = 4
@@ -87,7 +89,7 @@ func loadData(logger logger) {
 		if skip == 3 {
 			// decode headers
 			fields := readCSVLine(line.Text)
-			variates := stringSlice(fields)
+			variates = stringSlice(fields)
 			batteryFieldNumber = variates.pos(logger.BatteryVariateName)
 		}
 		if skip > 0 {
@@ -101,6 +103,7 @@ func loadData(logger logger) {
 		if err != nil {
 			log.Fatal(err)
 		}
+		// emit results
 		log.Println(fmt.Sprintf("%v: %v", logger.Site, voltage))
 		batteryVoltage.WithLabelValues(logger.Site).Set(voltage)
 		loadEvents.WithLabelValues(logger.Site).Inc()
