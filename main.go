@@ -61,21 +61,26 @@ func readCSVLine(text string) []string {
 	return fields
 }
 
-func loadData(logger logger) {
-
-	t, err := tail.TailFile(logger.FileName, tail.Config{
+func fileToTail(fileName string) *tail.Tail {
+	tail, err := tail.TailFile(fileName, tail.Config{
 		Follow: true,
 		ReOpen: true,
 	})
 	if err != nil {
 		log.Fatal(err)
 	}
+	return tail
+}
+
+func loadData(logger logger) {
+
+	tail := fileToTail(logger.FileName)
 
 	var batteryFieldNumber int
 
 	// Read title and variables and units
 	skip := 0
-	for line := range t.Lines {
+	for line := range tail.Lines {
 		if strings.Contains(line.Text, "TOA5") {
 			skip = 4
 		}
