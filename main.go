@@ -72,6 +72,13 @@ func fileToTail(fileName string) *tail.Tail {
 	return tail
 }
 
+func prepareData(fields []string, variates stringSlice) map[string]string {
+	result := make(map[string]string)
+	for k, v := range fields {
+		result[v] = variates[k]
+	}
+	return result
+}
 func loadData(logger logger) {
 
 	tail := fileToTail(logger.FileName)
