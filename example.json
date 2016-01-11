@@ -1,4 +1,5 @@
 [ 
 {"file-name": "MarginalLand_five_min.dat", "site":"luxarbor", "battery-variate-name": "BattV_Min" },
+{"file-name": "MarginalLand_five_min.dat", "site":"luxarbor", "battery-variate-name": "" },
 {"file-name": "raingauge_Table1.dat", "site":"lter-raingauge", "battery-variate-name": "GageMinV" } 
 ]

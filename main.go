@@ -154,13 +154,15 @@ func loadData(logger logger) {
 		}
 		// Read data
 		fields := readCSVLine(line.Text)
-		voltage, err := strconv.ParseFloat(fields[batteryFieldNumber], 64)
-		if err != nil {
-			log.Fatal(err)
+		if batteryFieldNumber > 0 {
+			voltage, err := strconv.ParseFloat(fields[batteryFieldNumber], 64)
+			if err != nil {
+				log.Fatal(err)
+			}
+			// emit results
+			log.Println(fmt.Sprintf("%v: %v", logger.Site, voltage))
+			batteryVoltage.WithLabelValues(logger.Site).Set(voltage)
 		}
-		// emit results
-		log.Println(fmt.Sprintf("%v: %v", logger.Site, voltage))
-		batteryVoltage.WithLabelValues(logger.Site).Set(voltage)
 		loadEvents.WithLabelValues(logger.Site).Inc()
 		data := prepareData(variates, fields)
 		sendMessage(data, logger.FileName)
