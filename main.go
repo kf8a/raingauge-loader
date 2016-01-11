@@ -6,11 +6,13 @@ import (
 	"fmt"
 	"github.com/ActiveState/tail"
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/streadway/amqp"
 	"log"
 	"net/http"
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
 var (
@@ -79,6 +81,52 @@ func prepareData(fields []string, variates stringSlice) map[string]string {
 	}
 	return result
 }
+
+func sendMessage(data map[string]string, fileName string) {
+	data["filename"] = fileName
+	message, err := json.Marshal(data)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Println(string(message))
+	sendMessageToRabbitMQ(message)
+}
+
+func sendMessageToRabbitMQ(message []byte) {
+	amqpUrl := os.Getenv("AMQP_URL")
+	if amqpUrl == "" {
+		return
+	}
+	conn, err := amqp.Dial(amqpUrl)
+	if err != nil {
+		log.Fatalf("connection.open: %s", err)
+	}
+	defer conn.Close()
+
+	c, err := conn.Channel()
+	if err != nil {
+		log.Fatalf("channel.open: %s", err)
+	}
+
+	err = c.ExchangeDeclare("datalogger", "topic", true, false, false, false, nil)
+	if err != nil {
+		log.Fatalf("exchange.declare: %v", err)
+	}
+	msg := amqp.Publishing{
+		DeliveryMode: amqp.Persistent,
+		Timestamp:    time.Now(),
+		ContentType:  "text/json",
+		Body:         message,
+	}
+
+	err = c.Publish("datalogger", "data", false, false, msg)
+	if err != nil {
+		// Since publish is asynchronous this can happen if the network connection
+		// is reset or if the server has run out of resources.
+		log.Fatalf("basic.publish: %v", err)
+	}
+}
+
 func loadData(logger logger) {
 
 	tail := fileToTail(logger.FileName)
@@ -114,6 +162,8 @@ func loadData(logger logger) {
 		log.Println(fmt.Sprintf("%v: %v", logger.Site, voltage))
 		batteryVoltage.WithLabelValues(logger.Site).Set(voltage)
 		loadEvents.WithLabelValues(logger.Site).Inc()
+		data := prepareData(variates, fields)
+		sendMessage(data, logger.FileName)
 	}
 }
 

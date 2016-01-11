@@ -16,14 +16,14 @@ func TestPostNotFindingString(t *testing.T) {
 	}
 }
 
-func TestToMessage(t *testing.T) {
+func TestPrepareData(t *testing.T) {
 	expected := map[string]string{
-		"one":   "one",
-		"two":   "two",
-		"three": "three",
+		"one":   "1",
+		"two":   "2",
+		"three": "3",
 	}
 	fields := []string{"one", "two", "three"}
-	variates := stringSlice{"one", "two", "three"}
+	variates := stringSlice{"1", "2", "3"}
 	x := prepareData(fields, variates)
 	if !reflect.DeepEqual(x, expected) {
 		t.Errorf("Expected %s but got %s", expected, x)
