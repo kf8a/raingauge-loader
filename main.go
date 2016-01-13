@@ -92,39 +92,51 @@ func sendMessage(data map[string]string, fileName string) {
 	sendMessageToRabbitMQ(message)
 }
 
+func failOnError(err error, msg string) {
+	if err != nil {
+		log.Fatalf("%s: %s", msg, err)
+		panic(fmt.Sprintf("%s: %s", msg, err))
+	}
+}
+
 func sendMessageToRabbitMQ(message []byte) {
 	amqpUrl := os.Getenv("AMQP_URL")
 	if amqpUrl == "" {
 		return
 	}
 	conn, err := amqp.Dial(amqpUrl)
-	if err != nil {
-		log.Fatalf("connection.open: %s", err)
-	}
+	failOnError(err, "failed to open connection")
+
 	defer conn.Close()
 
-	c, err := conn.Channel()
-	if err != nil {
-		log.Fatalf("channel.open: %s", err)
-	}
+	ch, err := conn.Channel()
+	failOnError(err, "Failed to open channel")
 
-	err = c.ExchangeDeclare("datalogger", "topic", true, false, false, false, nil)
-	if err != nil {
-		log.Fatalf("exchange.declare: %v", err)
-	}
-	msg := amqp.Publishing{
-		DeliveryMode: amqp.Persistent,
-		Timestamp:    time.Now(),
-		ContentType:  "text/json",
-		Body:         message,
-	}
+	// err = c.ExchangeDeclare("datalogger", "fanout", true, false, false, false, nil)
+	// failOnError("failed to declare exchange")
 
-	err = c.Publish("datalogger", "data", false, false, msg)
-	if err != nil {
-		// Since publish is asynchronous this can happen if the network connection
-		// is reset or if the server has run out of resources.
-		log.Fatalf("basic.publish: %v", err)
-	}
+	q, err := ch.QueueDeclare(
+		"data", // name
+		true,   // durable
+		false,  // delete when usused
+		false,  // exclusive
+		false,  // no-wait
+		nil,    // arguments
+	)
+	failOnError(err, "Failed to declare queue datalogger")
+
+	err = ch.Publish(
+		"",     // exchange
+		q.Name, // routing key
+		false,  // mandatory
+		false,  // immediate
+		amqp.Publishing{
+			DeliveryMode: amqp.Persistent,
+			Timestamp:    time.Now(),
+			ContentType:  "text/json",
+			Body:         message,
+		})
+	failOnError(err, "Failed to publish a message")
 }
 
 func loadData(logger logger) {
