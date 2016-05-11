@@ -1,5 +1,31 @@
-[ 
-{"file-name": "MarginalLand_five_min.dat", "site":"luxarbor", "battery-variate-name": "BattV_Min" },
-{"file-name": "MarginalLand_five_min.dat", "site":"luxarbor", "battery-variate-name": "" },
-{"file-name": "raingauge_Table1.dat", "site":"lter-raingauge", "battery-variate-name": "GageMinV" } 
+[
+{
+  "battery-datalogger-column-name": "BattV_Min",
+    "dbtable": {
+      "layout": [
+      { "db-column": "datetime", "datalogger-column": "TIMESTAMP" },
+      { "db-column": "battery_min_v", "datalogger-column": "BattV_Min" },
+      { "db-column": "pannel_temp_c", "datalogger-column": "PTemp_C_Avg" },
+      { "db-column": "soil_moisture_10_cm", "datalogger-column": "VWC_Avg" },
+      { "db-column": "soil_temperature_10_cm", "datalogger-column": "T_Avg" },
+      { "db-column": "wind_speed", "datalogger-column": "WS_ms_Avg" },
+      { "db-column": "rain_mm", "datalogger-column": "Rain_mm_Tot" },
+      { "db-column": "solar_radiation", "datalogger-column": "SlrMJ_Tot" },
+      { "db-column": "air_temperature", "datalogger-column": "AirTC_Avg" },
+      { "db-column": "rh", "datalogger-column": "RH" },
+      { "db-column": "par", "datalogger-column": "PAR_Den_Avg" },
+      { "db-column": "par_total", "datalogger-column": "PAR_Tot_Tot" },
+      { "db-column": "soil_moisture_20_cm", "datalogger-column": "vWC_2_Avg" },
+      { "db-column": "soil_temperature_20_cm", "datalogger-column": "T_2_Avg" }
+      ],
+        "name": "marginal_land_data"
+    },
+    "file-name": "MarginalLand_five_min.dat",
+    "site": "luxarbor"
+},
+{
+  "battery-datalogger-column-name": "GageMinV",
+  "file-name": "raingauge_Table1.dat",
+  "site": "lter-raingauge"
+}
 ]
