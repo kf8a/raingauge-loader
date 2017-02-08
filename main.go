@@ -166,6 +166,20 @@ func loadData(logger logger) {
 		}
 		// Read data
 		fields := readCSVLine(line.Text)
+
+		// Parse time field
+		const timeFormat = "2006-01-02 15:04:05"
+		datetime, err := time.Parse(timeFormat, fields[0])
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		// Skip if older than 1 day
+		ignore_before := time.Now().Add(-24 * time.Hour)
+		if datetime.Before(ignore_before) {
+			continue
+		}
+
 		if batteryFieldNumber > 0 {
 			voltage, err := strconv.ParseFloat(fields[batteryFieldNumber], 64)
 			if err != nil {
